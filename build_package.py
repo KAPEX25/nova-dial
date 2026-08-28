@@ -3,8 +3,8 @@
 """
 GX Speed Dial Pro - Build Script
 ================================
-Kök klasördeki (yerel/geliştirme) sürümü otomatik olarak iki çıktıya dönüştürür:
-"package" ve "opera".
+Kök klasördeki (yerel/geliştirme) sürümü otomatik olarak iki klasör ve iki ZIP
+çıktısına dönüştürür: "package", "opera", "package.zip" ve "opera.zip".
 
 Yaptıkları:
   1. Uzantı dosyalarını kökten package klasörüne kopyalar.
@@ -16,6 +16,7 @@ Yaptıkları:
   4. Opera chrome_url_overrides.newtab desteklemediği için, bu ayar olmadan
      kök dizinin bir kopyasını opera klasöründe oluşturur. README, New Metin
      Belgesi, build_package.py, package ve opera bu kopyaya alınmaz.
+  5. package ve opera klasörlerini ayrı ayrı ZIP arşivlerine dönüştürür.
 
 Kullanım:
     python build_package.py            # normal sürüm artırımı ile derle
@@ -41,6 +42,8 @@ except Exception:
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))          # betiğin bulunduğu kök
 PACKAGE_DIR = os.path.join(BASE_DIR, "package")
 OPERA_DIR = os.path.join(BASE_DIR, "opera")
+PACKAGE_ZIP_BASE = os.path.join(BASE_DIR, "package")
+OPERA_ZIP_BASE = os.path.join(BASE_DIR, "opera")
 MANIFEST_NAME = "manifest.json"
 
 # Package'a kopyalanacak dosyalar (kök klasörde bulunanlar)
@@ -60,6 +63,10 @@ OPERA_EXCLUDE = {
     "build_package.py",
     "package",
     "opera",
+    "package.zip",
+    "opera.zip",
+    ".git",
+    "__pycache__",
 }
 
 
@@ -101,6 +108,17 @@ def create_opera_copy():
             shutil.copytree(src, dst)
         else:
             shutil.copy2(src, dst)
+
+
+def create_zip_archives():
+    """package ve opera klasörlerini kökte ayrı ZIP dosyaları olarak oluşturur."""
+    package_zip = shutil.make_archive(
+        PACKAGE_ZIP_BASE, "zip", root_dir=BASE_DIR, base_dir="package"
+    )
+    opera_zip = shutil.make_archive(
+        OPERA_ZIP_BASE, "zip", root_dir=BASE_DIR, base_dir="opera"
+    )
+    return package_zip, opera_zip
 
 
 def main():
@@ -152,11 +170,16 @@ def main():
     # --- 6) Opera klasörünü oluştur ---
     create_opera_copy()
 
+    # --- 7) Klasörleri ayrı ZIP arşivlerine dönüştür ---
+    package_zip, opera_zip = create_zip_archives()
+
     print("\nBitti! Çıktılar hazır:")
     print(f"  Kaynak   : {BASE_DIR}")
     print(f"  Hedef    : {PACKAGE_DIR}")
     print(f"  Manifest : {PACKAGE_DIR}/{MANIFEST_NAME}  (sürüm {new_version})")
     print(f"  Opera    : {OPERA_DIR}  (hariç tutulanlar dışında kökün kopyası)")
+    print(f"  ZIP      : {package_zip}")
+    print(f"  ZIP      : {opera_zip}")
 
 
 if __name__ == "__main__":

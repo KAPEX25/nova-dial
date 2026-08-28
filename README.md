@@ -44,10 +44,12 @@ Haricî npm paketi ya da ayrı bir derleme kurulumu gerekmez.
 
 ## Çıktı klasörlerini oluşturma
 
-`build_package.py` iki klasör oluşturur:
+`build_package.py` iki klasör ve bu klasörlerin ayrı ZIP arşivlerini oluşturur:
 
 - `package/`: Chrome, Chromium, Edge, Brave ve Vivaldi için uzantı çıktısıdır. Manifestine `chrome_url_overrides.newtab` eklenir.
-- `opera/`: Opera için çıktıdır. Opera `chrome_url_overrides.newtab` desteklemediğinden bu ayar eklenmez; yeni sekme yönlendirmesi `background.js` ile yapılır.
+- `opera/`: Opera için çıktıdır. Opera `chrome_url_overrides.newtab` desteklemediğinden bu ayar eklenmez; yeni sekme yönlendirmesi `background.js` ile yapılır. Git ve Python önbellek dosyaları bu çıktıya alınmaz.
+- `package.zip`: `package/` klasörünün ZIP arşivi.
+- `opera.zip`: `opera/` klasörünün ZIP arşivi.
 
 Betik varsayılan olarak sürüm numarasının son hanesini de artırır.
 
@@ -73,7 +75,9 @@ nova-dial/
 ├── icon.png           # Uzantı simgesi
 ├── build_package.py   # package/ ve opera/ çıktısını oluşturan betik
 ├── package/           # Diğer Chromium tarayıcıları için uzantı çıktısı
-└── opera/             # Opera için filtrelenmiş kök dizin kopyası
+├── opera/             # Opera için filtrelenmiş kök dizin kopyası
+├── package.zip         # package/ klasörünün ZIP arşivi
+└── opera.zip           # opera/ klasörünün ZIP arşivi
 ```
 
 ## Veri ve izinler
