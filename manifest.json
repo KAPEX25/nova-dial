@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "Nova Dial",
+  "version": "1.0",
+  "description": "Chromium tabanlı tarayıcılar için geliştirilmiş, Opera GX esintili ve kişiselleştirilebilir bir yeni sekme (Speed Dial) uzantısıdır.",
+  "permissions": [
+    "tabs",
+    "storage",
+    "unlimitedStorage",
+    "topSites"
+  ],
+  "host_permissions": [
+    "https://suggestqueries.google.com/*",
+    "https://www.bing.com/*",
+    "https://duckduckgo.com/*",
+    "https://www.hurriyet.com.tr/*",
+    "https://www.trthaber.com/*",
+    "https://www.haberturk.com/*",
+    "https://www.ntv.com.tr/*",
+    "https://feeds.bbci.co.uk/*",
+    "https://hnrss.org/*",
+    "https://www.theverge.com/*",
+    "https://api.allorigins.win/*",
+    "https://corsproxy.io/*",
+    "https://api.codetabs.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "128": "icon.png"
+  }
+}

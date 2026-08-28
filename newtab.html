@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title data-i18n="pageTitle">Yeni Sekme</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="bg"></div>
+  <div id="bg-dim"></div>
+  <div id="bg-overlay"></div>
+
+  <button id="settings-btn" title="Ayarlar" data-i18n-title="settings">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    </svg>
+  </button>
+  <!-- Ayarlar butonu gizlendiğinde: fare sağ kenara gelince buton sağdan kayarak görünür -->
+  <div id="settings-hotspot" class="hidden"></div>
+
+  <div id="clock">
+    <div id="clock-time"></div>
+    <div id="clock-date"></div>
+  </div>
+
+  <div id="content">
+    <div id="brand">GX <span>Speed Dial</span></div>
+    <div id="greeting"></div>
+
+    <form id="search-form">
+      <img id="search-engine-icon" class="search-icon" alt="">
+      <input id="search-input" type="text" placeholder="Ara ya da adres yaz..." autocomplete="off" data-i18n-ph="searchPh" role="combobox" aria-autocomplete="list" aria-expanded="false">
+      <ul id="search-suggest" class="hidden" role="listbox" aria-label="Arama önerileri"></ul>
+    </form>
+
+    <div id="tiles"></div>
+
+    <div id="suggestions" class="hidden">
+      <div id="suggestions-title" data-i18n="suggestionsTitle">Önerilen</div>
+      <div id="suggestions-list"></div>
+    </div>
+
+    <div id="news" class="hidden">
+      <div id="news-title" data-i18n="newsTitle">Haberler</div>
+      <div id="news-list"></div>
+    </div>
+  </div>
+
+  <div id="credit">Design by Kapex Bilişim</div>
+
+  <!-- Kısayol ekle/düzenle modal -->
+  <div id="shortcut-modal" class="modal-backdrop hidden">
+    <div class="modal" style="padding:24px;">
+      <h2 id="shortcut-modal-title" data-i18n="shortcutAdd">Kısayol Ekle</h2>
+      <label data-i18n="name">İsim</label>
+      <input id="shortcut-name" type="text" placeholder="Örn: YouTube" maxlength="24" data-i18n-ph="namePh">
+      <label data-i18n="url">Adres</label>
+      <input id="shortcut-url" type="text" placeholder="Örn: youtube.com" data-i18n-ph="urlPh">
+      <div class="modal-actions">
+        <button id="shortcut-delete" class="btn btn-danger hidden" data-i18n="delete">Sil</button>
+        <div class="spacer"></div>
+        <button id="shortcut-cancel" class="btn btn-ghost" data-i18n="cancel">Vazgeç</button>
+        <button id="shortcut-save" class="btn btn-primary" data-i18n="save">Kaydet</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fotoğraf kırpma modalı -->
+  <div id="crop-modal" class="modal-backdrop hidden">
+    <div class="modal modal-wide">
+      <h2 data-i18n="cropTitle">Fotoğrafı Kırp</h2>
+      <p class="hint" id="crop-hint">Fotoğrafı sürükleyerek konumlandır, kaydırıcıyla yakınlaştır. Çerçeve, ekranının oranına (<b id="crop-res-label"></b>) kilitlendi.</p>
+
+      <div id="crop-frame-wrap">
+        <div id="crop-frame">
+          <img id="crop-image" draggable="false" alt="">
+        </div>
+      </div>
+
+      <label data-i18n="zoom">Yakınlaştır</label>
+      <input id="crop-zoom" type="range" min="100" max="300" value="100" class="slider">
+
+      <label class="checkbox-row">
+        <input id="crop-set-default" type="checkbox">
+        <span data-i18n="cropSetDefault">Bunu, eşleşme bulunamayan diğer çözünürlükler için de varsayılan yap</span>
+      </label>
+
+      <div class="modal-actions">
+        <button id="crop-reset" class="btn btn-ghost" data-i18n="reset">Sıfırla</button>
+        <div class="spacer"></div>
+        <button id="crop-cancel" class="btn btn-ghost" data-i18n="cancel">Vazgeç</button>
+        <button id="crop-save" class="btn btn-primary" data-i18n="cropSave">Kırp ve Ekle</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ayarlar modal -->
+  <div id="settings-modal" class="modal-backdrop hidden">
+    <div class="modal modal-wide modal-tall">
+      <div class="modal-sticky-head">
+        <h2 data-i18n="settings">Ayarlar</h2>
+
+        <div class="tabs" id="settings-tabs">
+          <button class="tab-btn active" data-tab="genel" data-i18n="tabGeneral">Genel</button>
+          <button class="tab-btn" data-tab="gorunum" data-i18n="tabAppearance">Görünüm</button>
+          <button class="tab-btn" data-tab="arkaplan" data-i18n="tabBackground">Arkaplan</button>
+          <button class="tab-btn" data-tab="yedekleme" data-i18n="tabBackup">Yedekleme</button>
+        </div>
+      </div>
+
+      <div class="tab-panels">
+
+        <!-- GENEL -->
+        <div class="tab-panel active" data-panel="genel">
+
+          <div class="settings-row">
+            <div class="settings-row-text">
+              <div class="settings-row-title" data-i18n="languageLabel">Dil</div>
+            </div>
+            <select id="opt-language" class="select">
+              <option value="tr">Türkçe</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-row-text">
+              <div class="settings-row-title" data-i18n="settingClock">Saat</div>
+              <div class="settings-row-desc" data-i18n="clockDesc">Sol üstte saati göster</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="opt-clock-enabled"><span class="switch-slider"></span></label>
+          </div>
+
+          <div class="settings-row" id="row-clock-format">
+            <div class="settings-row-text">
+              <div class="settings-row-title" data-i18n="clockFormat">Saat biçimi</div>
+              <div class="settings-row-desc" data-i18n="clockFormatDesc">24 saatlik veya 12 saatlik (ÖÖ/ÖS)</div>
+            </div>
+            <select id="opt-clock-format" class="select">
+              <option value="24" data-i18n="clock24h">24 saat</option>
+              <option value="12" data-i18n="clock12h">12 saat</option>
+            </select>
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-row-text">
+              <div class="settings-row-title" data-i18n="settingDate">Tarih</div>
+              <div class="settings-row-desc" data-i18n="dateDesc">Saatin altında günü/tarihi göster</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="opt-date-enabled"><span class="switch-slider"></span></label>
+          </div>
+
+          <div class="settings-row" style="padding: 0; border-bottom:none;padding-top:6px;">
+            <div class="settings-row-text">
+              <div class="settings-row-title" data-i18n="settingGreeting">Karşılama mesajı</div>
+              <div class="settings-row-desc" data-i18n="greetingDesc">Saate göre değişen "Günaydın" gibi bir selam göster</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="opt-greeting-enabled"><span class="switch-slider"></span></label>
+          </div>
+          <div id="row-greeting-name">
+            <input id="opt-greeting-name" type="text" placeholder="İsmin (örn: Mete)" maxlength="20" data-i18n-ph="greetingNamePh">
+          </div>
+
+          <div class="settings-row" style="padding: 0; border-bottom:none;padding-top:6px;">
+            <div class="settings-row-text">
+              <div class="settings-row-title" data-i18n="settingBrand">Marka yazısı</div>
+              <div class="settings-row-desc" data-i18n="brandDesc">Üstteki "GX Speed Dial" yazısını göster</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="opt-brand-enabled"><span class="switch-slider"></span></label>
+          </div>
+          <div id="row-brand-text">
+            <input id="opt-brand-text" type="text" placeholder="Marka yazısı" maxlength="30" data-i18n-ph="brandPh">
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-row-text">
+              <div class="settings-row-title" data-i18n="settingSearch">Arama çubuğu</div>
+              <div class="settings-row-desc" data-i18n="searchDesc">Kısayolların üstündeki arama kutusunu göster</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="opt-search-enabled"><span class="switch-slider"></span></label>
+          </div>
+
+          <div class="settings-row" id="row-search-engine">
+            <div class="settings-row-text">
+              <div class="settings-row-title" data-i18n="settingSearchEngine">Arama motoru</div>
+              <div class="settings-row-desc" data-i18n="searchEngineDesc">Yazı aratıldığında hangi motor kullanılsın</div>
+            </div>
+            <select id="opt-search-engine" class="select">
+              <option value="google">Google</option>
+              <option value="bing">Bing</option>
+              <option value="duckduckgo">DuckDuckGo</option>
+              <option value="yandex">Yandex</option>
+            </select>
+          </div>
+
+          <div class="settings-row" id="row-search-autofocus">
+            <div class="settings-row-text">
+              <div class="settings-row-title" data-i18n="settingAutoFocus">Otomatik odaklan</div>
+              <div class="settings-row-desc" data-i18n="autofocusDesc">Sekme açılınca imleç arama kutusunda hazır beklesin</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="opt-search-autofocus"><span class="switch-slider"></span></label>
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-row-text">
+              <div class="settings-row-title" data-i18n="settingTilesNewTab">Kısayollar yeni sekmede açılsın</div>
+              <div class="settings-row-desc" data-i18n="tilesNewTabDesc">Kapalıysa aynı sekmede açılır</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="opt-tiles-newtab"><span class="switch-slider"></span></label>
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-row-text">
+              <div class="settings-row-title" data-i18n="showAddTile">Kısayol ekle butonu</div>
+              <div class="settings-row-desc" data-i18n="showAddTileDesc">Ana ekranda sağdaki '+' ekleme kutucuğunu göster</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="opt-show-addtile"><span class="switch-slider"></span></label>
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-row-text">
+              <div class="settings-row-title" data-i18n="showSuggestions">Önerilen siteler</div>
+              <div class="settings-row-desc" data-i18n="showSuggestionsDesc">Kısayolların bir altında popüler site önerilerini göster</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="opt-suggestions"><span class="switch-slider"></span></label>
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-row-text">
+              <div class="settings-row-title" data-i18n="maxSuggestions">Öneri sayısı</div>
+              <div class="settings-row-desc" data-i18n="maxSuggestionsDesc">Önerilen bölümde en fazla kaç site gösterileceği</div>
+              <input id="opt-max-suggestions" type="range" min="4" max="32" step="1" value="16" class="slider">
+              <div class="slider-val" id="opt-max-suggestions-val">16</div>
+            </div>
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-row-text">
+              <div class="settings-row-title" data-i18n="showNews">Haberler</div>
+              <div class="settings-row-desc" data-i18n="showNewsDesc">Önerilerin altında seçili kaynaktan güncel haberleri göster</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="opt-news"><span class="switch-slider"></span></label>
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-row-text">
+              <div class="settings-row-title" data-i18n="newsSource">Haber kaynağı</div>
+              <div class="settings-row-desc" data-i18n="newsSourceDesc">Haberlerin hangi kaynaktan getirileceği</div>
+            </div>
+            <select id="opt-news-source" class="select"></select>
+          </div>
+
+          <div class="settings-row hidden" id="row-news-custom">
+            <div class="settings-row-text">
+              <div class="settings-row-title" data-i18n="customNewsTitle">Özel RSS adresi</div>
+              <div class="settings-row-desc" data-i18n="customNewsDesc">Kendi RSS veya Atom besleme adresini gir</div>
+              <input id="opt-news-custom-url" type="text" placeholder="https://ornek.com/haberler.xml" data-i18n-ph="customNewsPh" spellcheck="false">
+            </div>
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-row-text">
+              <div class="settings-row-title" data-i18n="showSettingsBtn">Ayarlar butonu</div>
+              <div class="settings-row-desc" data-i18n="showSettingsBtnDesc">Kapalıyken fare ekranın sağ kenarına gelince buton kayarak görünür</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="opt-settings-btn"><span class="switch-slider"></span></label>
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-row-text">
+              <div class="settings-row-title" data-i18n="settingCredit">"Design by Kapex Bilişim" imzası</div>
+              <div class="settings-row-desc" data-i18n="creditDesc">Sağ altta küçük bir imza gösterir</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="opt-credit-enabled"><span class="switch-slider"></span></label>
+          </div>
+
+        </div>
+
+        <!-- GÖRÜNÜM -->
+        <div class="tab-panel" data-panel="gorunum">
+
+          <div class="settings-block">
+            <div class="settings-row-title" data-i18n="accentColor">Vurgu rengi</div>
+            <div class="settings-row-desc" data-i18n="accentColorDesc">Butonlar, çerçeveler ve ışıltı efektinin rengi</div>
+            <div id="color-swatches"></div>
+            <div class="color-custom-row">
+              <input id="opt-accent-custom" type="color" value="#ff2f6e">
+              <span class="hint" data-i18n="customColor">Özel renk seç</span>
+            </div>
+          </div>
+
+          <div class="settings-block">
+            <div class="settings-row-title" data-i18n="overlay">Karartma yoğunluğu</div>
+            <div class="settings-row-desc" data-i18n="overlayDesc">Arkaplan fotoğrafının üstündeki koyu katman — yazıların okunurluğunu etkiler</div>
+            <input id="opt-overlay-opacity" type="range" min="0" max="90" value="45" class="slider">
+          </div>
+
+          <div class="settings-block">
+            <div class="settings-row-title" data-i18n="glassBlur">Cam efekti (blur) yoğunluğu</div>
+            <div class="settings-row-desc" data-i18n="glassBlurDesc">Arama kutusu, kısayollar ve panellerdeki buzlu cam efekti</div>
+            <input id="opt-glass-blur" type="range" min="0" max="30" value="18" class="slider">
+          </div>
+
+          <div class="settings-block">
+            <div class="settings-row-title" data-i18n="tileSize">Kısayol kutucuk boyutu</div>
+            <div class="settings-row-desc" data-i18n="tileSizeDesc">Ana ekrandaki kısayol ikonlarının büyüklüğü</div>
+            <div class="segmented" id="opt-tile-size">
+              <button data-value="small" data-i18n="tileSmall">Küçük</button>
+              <button data-value="medium" data-i18n="tileMedium">Orta</button>
+              <button data-value="large" data-i18n="tileLarge">Büyük</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ARKAPLAN -->
+        <div class="tab-panel" data-panel="arkaplan">
+          <p class="hint"><span id="current-res-label"></span> <b id="current-res"></b></p>
+          <p class="hint" data-i18n="bgHint">Bu çözünürlük için fotoğraf ekle — bilgisayarın başka bir çözünürlükte açıldığında (örn. 1920x1080 yerine 1440x900) farklı bir fotoğraf otomatik gösterilecek. Aynı çözünürlüğe birden fazla fotoğraf ekleyebilirsin.</p>
+
+          <label id="bg-dropzone" for="bg-upload" class="dropzone">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            <div class="dropzone-text" data-i18n-html="dropzoneText">Fotoğrafı buraya sürükle bırak <span>ya da tıklayıp seç</span></div>
+            <input id="bg-upload" type="file" accept="image/*" class="dropzone-input">
+          </label>
+
+          <div class="settings-row" id="row-slideshow">
+            <div class="settings-row-text">
+              <div class="settings-row-title" data-i18n="multiPhoto">Birden fazla fotoğraf varsa</div>
+              <div class="settings-row-desc" data-i18n="multiPhotoDesc">Her yeni sekmede farklı bir fotoğraf göster</div>
+            </div>
+            <select id="opt-slideshow-mode" class="select">
+              <option value="off" data-i18n="slideshowOff">Hep ilki</option>
+              <option value="sequential" data-i18n="slideshowSeq">Sırayla değiştir</option>
+              <option value="random" data-i18n="slideshowRandom">Rastgele değiştir</option>
+            </select>
+          </div>
+
+          <div class="settings-block">
+            <div class="settings-row-title" data-i18n="bgBlurTitle">Arkaplan bulanıklığı</div>
+            <div class="settings-row-desc" data-i18n="bgBlurDesc">Fotoğrafın kendisini hafifçe bulanıklaştırır</div>
+            <input id="opt-bg-blur" type="range" min="0" max="20" value="0" class="slider">
+          </div>
+
+          <div id="bg-list"></div>
+        </div>
+
+        <!-- YEDEKLEME -->
+        <div class="tab-panel" data-panel="yedekleme">
+          <p class="hint" data-i18n="backupHint">Tüm ayarlarını, kısayollarını ve arkaplan fotoğraflarını bir dosyaya kaydet, istersen başka bir bilgisayara aktar.</p>
+
+          <div class="settings-row">
+            <div class="settings-row-text">
+              <div class="settings-row-title" data-i18n="exportTitle">Dışa aktar</div>
+              <div class="settings-row-desc" data-i18n="exportDesc">Her şeyi bir .json dosyası olarak indir</div>
+            </div>
+            <button id="btn-export" class="btn btn-ghost" data-i18n="download">İndir</button>
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-row-text">
+              <div class="settings-row-title" data-i18n="importTitle">İçe aktar</div>
+              <div class="settings-row-desc" data-i18n="importDesc">Daha önce indirdiğin .json dosyasını yükle</div>
+            </div>
+            <label class="btn btn-ghost file-btn"><span data-i18n="chooseFile">Dosya Seç</span><input id="btn-import" type="file" accept="application/json" class="hidden"></label>
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-row-text">
+              <div class="settings-row-title" data-i18n="clearTitle">Tüm kısayolları sil</div>
+              <div class="settings-row-desc" data-i18n="clearDesc">Sadece kısayolları temizler, ayarlar ve fotoğraflar kalır</div>
+            </div>
+            <button id="btn-clear-shortcuts" class="btn btn-danger" data-i18n="clear">Temizle</button>
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-row-text">
+              <div class="settings-row-title" data-i18n="resetAllTitle">Fabrika ayarlarına dön</div>
+              <div class="settings-row-desc" data-i18n="resetAllDesc">Her şeyi siler: kısayollar, fotoğraflar, ayarlar</div>
+            </div>
+            <button id="btn-reset-all" class="btn btn-danger" data-i18n="reset">Sıfırla</button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-actions">
+        <div class="spacer"></div>
+        <button id="settings-close" class="btn btn-primary" data-i18n="close">Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="newtab.js"></script>
+</body>
+</html>
