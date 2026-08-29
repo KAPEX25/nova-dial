@@ -396,6 +396,128 @@
     </div>
   </div>
 
+  <!-- İlk kurulum - hoş geldin sihirbazı (yalnızca bir kez gösterilir) -->
+  <div id="welcome" class="hidden">
+    <div class="welcome-card">
+      <div class="welcome-brand">Nova <span>Dial</span></div>
+      <div id="welcome-dots"></div>
+
+      <div class="welcome-body">
+        <!-- Adım 1: Dil -->
+        <section class="welcome-step" data-step="1">
+          <h2 data-i18n="welcomeTitle">Nova Dial'a Hoş Geldin</h2>
+          <p class="hint" data-i18n="welcomeSub">Birkaç saniyede kendine göre ayarla; bunların hepsini sonra ayarlardan değiştirebilirsin.</p>
+          <div id="welcome-langs" class="welcome-cards">
+            <button type="button" class="welcome-card-btn" data-lang="tr">
+              <span class="big">Türkçe</span>
+              <span class="sub">Bu dille devam et</span>
+            </button>
+            <button type="button" class="welcome-card-btn" data-lang="en">
+              <span class="big">English</span>
+              <span class="sub">Continue in English</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- Adım 2: İsim -->
+        <section class="welcome-step" data-step="2">
+          <h2 data-i18n="welcomeStepName">Sana nasıl hitap edelim?</h2>
+          <p class="hint" data-i18n="welcomeNameHint">Karşılama mesajında ismin görünür. Boş bırakabilirsin.</p>
+          <input id="welcome-name" type="text" maxlength="30" placeholder="İsmin (örn: Ahmet)" data-i18n-ph="greetingNamePh">
+        </section>
+
+        <!-- Adım 3: Vurgu rengi -->
+        <section class="welcome-step" data-step="3">
+          <h2 data-i18n="welcomeStepColor">Vurgu rengini seç</h2>
+          <p class="hint" data-i18n="accentColorDesc">Butonlar, çerçeveler ve ışıltı efektinin rengi</p>
+          <div id="welcome-swatches"></div>
+          <div class="color-custom-row welcome-custom-row">
+            <input id="welcome-custom-color" type="color">
+            <span data-i18n="customColor">Özel renk seç</span>
+          </div>
+        </section>
+
+        <!-- Adım 4: Arama motoru -->
+        <section class="welcome-step" data-step="4">
+          <h2 data-i18n="welcomeStepEngine">Arama motorun</h2>
+          <p class="hint" data-i18n="searchEngineDesc">Yazı aratıldığında hangi motor kullanılsın</p>
+          <div id="welcome-engines" class="welcome-cards"></div>
+        </section>
+
+        <!-- Adım 5: Kısayollar -->
+        <section class="welcome-step" data-step="5">
+          <h2 data-i18n="welcomeStepSites">Hazır kısayollar</h2>
+          <p class="hint" data-i18n="welcomeSitesHint">Tıklayarak seç ya da çıkar. Sonrasını ana ekrandaki + kutucuğundan istediğin gibi düzenlersin.</p>
+          <div id="welcome-sites"></div>
+        </section>
+        <!-- Adım 6: Hızlı tur -->
+        <section class="welcome-step" data-step="6">
+          <h2 data-i18n="welcomeTourTitle">Hızlı tur</h2>
+          <p class="hint" data-i18n="welcomeTourDesc">Her şeyin nerede olduğunu gösterelim; hepsini sonra ayarlardan değiştirebilirsin.</p>
+          <div class="tour-tips">
+            <div class="tour-tip">
+              <div class="tour-tip-icon"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></div>
+              <div class="tour-tip-body">
+                <div class="tour-tip-head">
+                  <span class="tour-tip-title" data-i18n="tourSettingsT">Ayarlar</span>
+                  <span class="tour-where" data-i18n="tourWhereTopRight">sağ üst</span>
+                </div>
+                <p class="tour-tip-desc" data-i18n="tourSettingsD">Sağ üstteki dişli simgesinden açılır. Butonu gizlediysen fareyi ekranın sağ kenarına götürmen yeterli — buton kayarak gelir.</p>
+              </div>
+            </div>
+            <div class="tour-tip">
+              <div class="tour-tip-icon"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+              <div class="tour-tip-body">
+                <div class="tour-tip-head">
+                  <span class="tour-tip-title" data-i18n="tourClockT">Saat &amp; tarih</span>
+                  <span class="tour-where" data-i18n="tourWhereTopLeft">sol üst</span>
+                </div>
+                <p class="tour-tip-desc" data-i18n="tourClockD">Sol üstte büyük saat, altında tarih görünür. Ayarlardan 12/24 saat biçimini seçebilir ya da tamamen gizleyebilirsin.</p>
+              </div>
+            </div>
+            <div class="tour-tip">
+              <div class="tour-tip-icon"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div>
+              <div class="tour-tip-body">
+                <div class="tour-tip-head">
+                  <span class="tour-tip-title" data-i18n="tourSearchT">Arama</span>
+                  <span class="tour-where" data-i18n="tourWhereKey">/ tuşu</span>
+                </div>
+                <p class="tour-tip-desc" data-i18n="tourSearchD">Yazmaya başladığında site önerileri listelenir. Klavyeden / tuşuyla her an arama kutusuna dönebilirsin.</p>
+              </div>
+            </div>
+            <div class="tour-tip">
+              <div class="tour-tip-icon"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></div>
+              <div class="tour-tip-body">
+                <div class="tour-tip-head">
+                  <span class="tour-tip-title" data-i18n="tourTilesT">Kısayollar</span>
+                  <span class="tour-where" data-i18n="tourWhereTiles">kutucuklar</span>
+                </div>
+                <p class="tour-tip-desc" data-i18n="tourTilesD">Eklemek için + kutucuğuna tıkla; düzenlemek için kısayola sağ tıkla; sıralamak için tutup sürükle.</p>
+              </div>
+            </div>
+            <div class="tour-tip">
+              <div class="tour-tip-icon"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></div>
+              <div class="tour-tip-body">
+                <div class="tour-tip-head">
+                  <span class="tour-tip-title" data-i18n="tourNewsT">Haberler</span>
+                  <span class="tour-where" data-i18n="tourWhereBottom">alt kısım</span>
+                </div>
+                <p class="tour-tip-desc" data-i18n="tourNewsD">Ayarlar'dan açıp kaynağını seçebilirsin; önerilerin altında listelenir.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="welcome-foot">
+        <button id="welcome-skip" class="btn btn-ghost" data-i18n="welcomeSkip">Atla</button>
+        <div class="spacer"></div>
+        <button id="welcome-back" class="btn btn-ghost hidden" data-i18n="welcomeBack">Geri</button>
+        <button id="welcome-next" class="btn btn-primary" data-i18n="welcomeNext">İleri</button>
+      </div>
+    </div>
+  </div>
+
   <script src="newtab.js"></script>
 </body>
 </html>

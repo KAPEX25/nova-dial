@@ -30,6 +30,8 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 // newtab.html sayfasından yapılan dış istekler CORS'a takılabiliyor.
 // host_permissions service worker için de geçerli olduğu için haber/RSS
 // isteklerini buradan geçiriyoruz: "FETCH_URL" mesajı -> { ok, status, text }.
+
+
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   if (!msg || msg.type !== "FETCH_URL") return;
   const url = typeof msg.url === "string" ? msg.url : "";

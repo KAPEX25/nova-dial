@@ -10,6 +10,8 @@
     "topSites"
   ],
   "host_permissions": [
+    "https://www.google.com/*",
+    "https://*.gstatic.com/*",
     "https://suggestqueries.google.com/*",
     "https://www.bing.com/*",
     "https://duckduckgo.com/*",

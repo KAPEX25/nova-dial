@@ -895,3 +895,255 @@ html, body {
   max-width: none;
   max-height: none;
 }
+
+/* ---------- İlk kurulum: hoş geldin sihirbazı ---------- */
+#welcome {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 5, 10, 0.7);
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.25s ease;
+}
+#welcome.hidden { display: none; }
+
+.welcome-card {
+  width: min(92%, 540px);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  background: #16161c;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 26px 28px 22px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+  animation: pop 0.25s ease;
+}
+
+.welcome-brand {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.welcome-brand span {
+  color: var(--accent);
+  text-shadow: 0 0 18px var(--accent-glow);
+}
+
+#welcome-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 14px 0 4px;
+}
+#welcome-dots .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+#welcome-dots .dot.active {
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent-glow);
+  transform: scale(1.2);
+}
+
+.welcome-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 2px;
+}
+.welcome-step { display: none; animation: fadeIn 0.2s ease; }
+.welcome-step.active { display: block; }
+.welcome-step h2 {
+  margin: 10px 0 6px;
+  font-size: 20px;
+  text-align: center;
+}
+.welcome-step .hint {
+  text-align: center;
+  margin: 0 0 14px;
+}
+
+.welcome-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 6px;
+}
+.welcome-card-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 18px 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+.welcome-card-btn:hover {
+  border-color: var(--accent);
+  background: rgba(255,255,255,0.08);
+}
+.welcome-card-btn.selected {
+  border-color: var(--accent);
+  background: rgba(255,255,255,0.07);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.welcome-card-btn .big { font-size: 16px; font-weight: 700; }
+.welcome-card-btn .sub { font-size: 11.5px; color: var(--text-dim); }
+.welcome-card-btn img {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+#welcome-name {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.05);
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+#welcome-name:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+#welcome-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin: 16px 0;
+}
+#welcome-swatches .swatch { width: 36px; height: 36px; }
+
+.welcome-custom-row {
+  justify-content: center;
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+#welcome-sites {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: 10px;
+  margin-top: 6px;
+}
+.welcome-site {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  padding: 14px 8px 11px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+}
+.welcome-site:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+.welcome-site.selected {
+  border-color: var(--accent);
+  background: rgba(255,255,255,0.07);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+.welcome-site img {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  object-fit: contain;
+}
+.welcome-site span {
+  font-size: 12px;
+  font-weight: 600;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Hızlı tur ipuçları (sihirbaz 6. adım) */
+.tour-tips {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-top: 10px;
+}
+.tour-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 11px 13px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.tour-tip-icon {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  color: var(--accent);
+  background: var(--accent-glow);
+  border: 1px solid var(--accent);
+}
+.tour-tip-body { flex: 1; min-width: 0; }
+.tour-tip-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.tour-tip-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text);
+}
+.tour-where {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  background: var(--accent-glow);
+  white-space: nowrap;
+}
+.tour-tip-desc {
+  margin: 3px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+
+.welcome-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+}

@@ -196,6 +196,36 @@
       greetMorning: "Günaydın",
       greetDay: "İyi günler",
       greetEvening: "İyi akşamlar",
+      welcomeTitle: "Nova Dial'a Hoş Geldin",
+      welcomeSub: "Birkaç saniyede kendine göre ayarla; bunların hepsini sonra ayarlardan değiştirebilirsin.",
+      welcomeStepName: "Sana nasıl hitap edelim?",
+      welcomeNameHint: "Karşılama mesajında ismin görünür. Boş bırakabilirsin.",
+      welcomeStepColor: "Vurgu rengini seç",
+      welcomeStepEngine: "Arama motorun",
+      welcomeStepSites: "Hazır kısayollar",
+      welcomeSitesHint: "Tıklayarak seç ya da çıkar. Sonrasını ana ekrandaki + kutucuğundan istediğin gibi düzenlersin.",
+      welcomeBack: "Geri",
+      welcomeNext: "İleri",
+      welcomeStart: "Başlayalım",
+      welcomeSkip: "Atla",
+      // Adım 6: hızlı tur
+      welcomeTourTitle: "Hızlı tur",
+      welcomeTourDesc: "Her şeyin nerede olduğunu gösterelim; hepsini sonra ayarlardan değiştirebilirsin.",
+      tourWhereTopRight: "sağ üst",
+      tourWhereTopLeft: "sol üst",
+      tourWhereKey: "/ tuşu",
+      tourWhereTiles: "kutucuklar",
+      tourWhereBottom: "alt kısım",
+      tourSettingsT: "Ayarlar",
+      tourSettingsD: "Sağ üstteki dişli simgesinden açılır. Butonu gizlediysen fareyi ekranın sağ kenarına götürmen yeterli — buton kayarak gelir.",
+      tourClockT: "Saat & tarih",
+      tourClockD: "Sol üstte büyük saat, altında tarih görünür. Ayarlardan 12/24 saat biçimini seçebilir ya da tamamen gizleyebilirsin.",
+      tourSearchT: "Arama",
+      tourSearchD: "Yazmaya başladığında site önerileri listelenir. Klavyeden / tuşuyla her an arama kutusuna dönebilirsin.",
+      tourTilesT: "Kısayollar",
+      tourTilesD: "Eklemek için + kutucuğuna tıkla; düzenlemek için kısayola sağ tıkla; sıralamak için tutup sürükle.",
+      tourNewsT: "Haberler",
+      tourNewsD: "Ayarlar'dan açıp kaynağını seçebilirsin; önerilerin altında listelenir.",
     },
     en: {
       pageTitle: "Nova Dial",
@@ -318,6 +348,36 @@
       greetMorning: "Good morning",
       greetDay: "Good afternoon",
       greetEvening: "Good evening",
+      welcomeTitle: "Welcome to Nova Dial",
+      welcomeSub: "Set it up in a few seconds. You can change all of this later in settings.",
+      welcomeStepName: "What should we call you?",
+      welcomeNameHint: "Your name appears in the greeting. You can leave it empty.",
+      welcomeStepColor: "Pick an accent color",
+      welcomeStepEngine: "Your search engine",
+      welcomeStepSites: "Starter shortcuts",
+      welcomeSitesHint: "Click to select or deselect. You can edit everything later with the + tile on the main screen.",
+      welcomeBack: "Back",
+      welcomeNext: "Next",
+      welcomeStart: "Let's go",
+      welcomeSkip: "Skip",
+      // Step 6: quick tour
+      welcomeTourTitle: "Quick tour",
+      welcomeTourDesc: "Here's where everything lives — you can customize all of it later in Settings.",
+      tourWhereTopRight: "top right",
+      tourWhereTopLeft: "top left",
+      tourWhereKey: "/ key",
+      tourWhereTiles: "tiles",
+      tourWhereBottom: "bottom",
+      tourSettingsT: "Settings",
+      tourSettingsD: "Open via the gear icon at the top right. If you hid the button, just move your mouse to the right edge — it slides back in.",
+      tourClockT: "Clock & date",
+      tourClockD: "A big clock sits at the top left with the date below. Pick 12/24-hour format or hide it entirely in Settings.",
+      tourSearchT: "Search",
+      tourSearchD: "Site suggestions appear as you type. Press / on your keyboard to jump back to the search box anytime.",
+      tourTilesT: "Shortcuts",
+      tourTilesD: "Click the + tile to add one, right-click a shortcut to edit it, and drag & drop to reorder.",
+      tourNewsT: "News",
+      tourNewsD: "Turn it on in Settings and pick a source; it shows up below the suggestions.",
     },
   };
 
@@ -629,7 +689,8 @@
   });
 
   document.addEventListener("keydown", (e) => {
-    if (e.key === "/" && document.activeElement !== input && !isModalOpen()) {
+    if (e.key === "/" && document.activeElement !== input && !isModalOpen()
+        && document.getElementById("welcome").classList.contains("hidden")) {
       e.preventDefault();
       input.focus();
     }
@@ -656,14 +717,45 @@
   let shortcuts = [];
   let editingId = null;
   let dragSrcId = null;
+  const fallbackFaviconUrl = chrome.runtime.getURL("icon.png");
 
   function faviconUrl(url) {
     try {
-      const domain = new URL(url).hostname;
-      return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+      const parsedUrl = new URL(normalizeUrl(url));
+      // Bu servis, sitenin HTML içinde tanımladığı favicon dosyasını da bulur;
+      // yalnızca /favicon.ico kullanmak Claude ve Yandex gibi siteleri kaçırır.
+      return `https://www.google.com/s2/favicons?domain=${parsedUrl.hostname}&sz=64`;
     } catch {
       return "";
     }
+  }
+
+  function setFavicon(img, url) {
+    const source = faviconUrl(url);
+    img.src = fallbackFaviconUrl;
+    if (!source) return;
+
+    // Google bazı favicon'suz alan adları için dünya simgesini 404 ile PNG
+    // olarak döndürür. <img> bu PNG'yi gösterebildiği için onerror çalışmaz;
+    // önce HTTP durumunu kontrol ederek bu yanıtları ayıklıyoruz.
+    fetch(source)
+      .then((response) => {
+        if (!response.ok) throw new Error(`Favicon bulunamadı: ${response.status}`);
+        return response.blob();
+      })
+      .then((blob) => {
+        const objectUrl = URL.createObjectURL(blob);
+        img.onload = () => URL.revokeObjectURL(objectUrl);
+        img.onerror = () => {
+          URL.revokeObjectURL(objectUrl);
+          img.onerror = null;
+          img.src = fallbackFaviconUrl;
+        };
+        img.src = objectUrl;
+      })
+      .catch(() => {
+        img.src = fallbackFaviconUrl;
+      });
   }
 
   function normalizeUrl(raw) {
@@ -694,28 +786,20 @@
       const iconBox = document.createElement("div");
       iconBox.className = "tile-icon";
       const img = document.createElement("img");
-      img.src = faviconUrl(s.url);
-      img.onerror = () => {
-        iconBox.innerHTML = "";
-        iconBox.textContent = (s.name || "?").charAt(0).toUpperCase();
-      };
+      img.alt = "";
+      setFavicon(img, s.url);
       iconBox.appendChild(img);
 
       const label = document.createElement("div");
       label.className = "tile-label";
       label.textContent = s.name;
 
-      const editBtn = document.createElement("div");
-      editBtn.className = "tile-edit-btn";
-      editBtn.textContent = "✎";
-      editBtn.title = t("edit");
-      editBtn.addEventListener("click", (e) => {
+      tile.addEventListener('contextmenu', function (e) {
         e.preventDefault();
         e.stopPropagation();
         openShortcutModal(s);
-      });
-
-      tile.appendChild(editBtn);
+      }, false);
+      //tile.appendChild(editBtn);
       tile.appendChild(iconBox);
       tile.appendChild(label);
 
@@ -804,12 +888,8 @@
         const icon = document.createElement("div");
         icon.className = "tile-icon"; // kısayol ikonuyla aynı boyut/boşlu
         const img = document.createElement("img");
-        img.src = faviconUrl(url);
         img.alt = "";
-        img.onerror = () => {
-          img.style.visibility = "hidden";
-          if (!icon.firstChild) icon.textContent = (name || "?").charAt(0).toUpperCase();
-        };
+        setFavicon(img, url);
         icon.appendChild(img);
 
         const label = document.createElement("div");
@@ -1622,14 +1702,211 @@
   });
 
   // ---------------------------------------------------------------
+  // İlk kurulum - hoş geldin sihirbazı (yalnızca bir kez gösterilir)
+  // ---------------------------------------------------------------
+  const WELCOME_STEPS = 6;
+  const welcomeEl = document.getElementById("welcome");
+  let welcomeStep = 1;
+  const welcomeSiteIdx = new Set(); // adım 5'te seçilen hazır kısayolların indeksleri
+
+  const ENGINE_LABELS = { google: "Google", bing: "Bing", duckduckgo: "DuckDuckGo", yandex: "Yandex" };
+
+  function renderWelcomeDots() {
+    const dots = document.getElementById("welcome-dots");
+    if (dots.children.length !== WELCOME_STEPS) {
+      dots.innerHTML = "";
+      for (let i = 0; i < WELCOME_STEPS; i++) {
+        const d = document.createElement("span");
+        d.className = "dot";
+        dots.appendChild(d);
+      }
+    }
+    [...dots.children].forEach((d, i) => d.classList.toggle("active", i + 1 === welcomeStep));
+  }
+
+  function renderWelcome() {
+    welcomeEl.querySelectorAll(".welcome-step").forEach((sec) => {
+      sec.classList.toggle("active", Number(sec.dataset.step) === welcomeStep);
+    });
+    document.getElementById("welcome-back").classList.toggle("hidden", welcomeStep === 1);
+    document.getElementById("welcome-next").textContent =
+      welcomeStep === WELCOME_STEPS ? t("welcomeStart") : t("welcomeNext");
+    renderWelcomeDots();
+  }
+
+  function welcomeGo(n) {
+    welcomeStep = Math.min(WELCOME_STEPS, Math.max(1, n));
+    renderWelcome();
+    if (welcomeStep === 2) setTimeout(() => document.getElementById("welcome-name").focus(), 60);
+  }
+
+  function markWelcomeLang() {
+    document.querySelectorAll("#welcome-langs .welcome-card-btn").forEach((b) => {
+      b.classList.toggle("selected", b.dataset.lang === settings.language);
+    });
+  }
+
+  function markWelcomeSwatches() {
+    document.querySelectorAll("#welcome-swatches .swatch").forEach((s) => {
+      s.classList.toggle("active", s.dataset.color.toLowerCase() === (settings.accentColor || "").toLowerCase());
+    });
+    document.getElementById("welcome-custom-color").value = settings.accentColor;
+  }
+
+  function markWelcomeEngines() {
+    document.querySelectorAll("#welcome-engines .welcome-card-btn").forEach((b) => {
+      b.classList.toggle("selected", b.dataset.engine === settings.searchEngine);
+    });
+  }
+
+  function buildWelcomeSwatches() {
+    const wrap = document.getElementById("welcome-swatches");
+    wrap.innerHTML = "";
+    ACCENT_PRESETS.forEach((color) => {
+      const sw = document.createElement("div");
+      sw.className = "swatch";
+      sw.style.background = color;
+      sw.dataset.color = color;
+      sw.addEventListener("click", () => {
+        settings.accentColor = color;
+        applySettings();
+        markWelcomeSwatches();
+      });
+      wrap.appendChild(sw);
+    });
+    markWelcomeSwatches();
+  }
+
+  function buildWelcomeEngines() {
+    const wrap = document.getElementById("welcome-engines");
+    wrap.innerHTML = "";
+    Object.keys(SEARCH_ENGINES).forEach((key) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "welcome-card-btn";
+      btn.dataset.engine = key;
+
+      const img = document.createElement("img");
+      img.alt = "";
+      img.src = `https://www.google.com/s2/favicons?domain=${SEARCH_ENGINE_DOMAINS[key]}&sz=32`;
+      const big = document.createElement("span");
+      big.className = "big";
+      big.textContent = ENGINE_LABELS[key] || key;
+      btn.appendChild(img);
+      btn.appendChild(big);
+
+      btn.addEventListener("click", () => {
+        settings.searchEngine = key;
+        applySettings();
+        markWelcomeEngines();
+        setTimeout(() => { if (welcomeStep === 4) welcomeGo(5); }, 260);
+      });
+      wrap.appendChild(btn);
+    });
+    markWelcomeEngines();
+  }
+
+  function buildWelcomeSites() {
+    const wrap = document.getElementById("welcome-sites");
+    wrap.innerHTML = "";
+    FALLBACK_SUGGESTED_SITES.forEach((site, i) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "welcome-site";
+      if (welcomeSiteIdx.has(i)) btn.classList.add("selected");
+
+      const img = document.createElement("img");
+      img.alt = "";
+      img.src = faviconUrl(site.url) || fallbackFaviconUrl;
+      img.onerror = () => { img.src = fallbackFaviconUrl; };
+      const label = document.createElement("span");
+      label.textContent = site.title;
+      btn.appendChild(img);
+      btn.appendChild(label);
+
+      btn.addEventListener("click", () => {
+        const on = btn.classList.toggle("selected");
+        if (on) welcomeSiteIdx.add(i); else welcomeSiteIdx.delete(i);
+      });
+      wrap.appendChild(btn);
+    });
+  }
+
+  function showWelcome() {
+    buildWelcomeSwatches();
+    buildWelcomeEngines();
+    buildWelcomeSites();
+    document.getElementById("welcome-name").value = settings.greetingName || "";
+    markWelcomeLang();
+    welcomeStep = 1;
+    renderWelcome();
+    welcomeEl.classList.remove("hidden");
+  }
+
+  async function finishWelcome() {
+    // O ana kadar yapılan seçimleri koru ve bu cihazda bir daha gösterme
+    await saveSettings();
+    if (welcomeSiteIdx.size > 0) {
+      const picked = [...welcomeSiteIdx].sort((a, b) => a - b).map((i) => FALLBACK_SUGGESTED_SITES[i]);
+      shortcuts = picked.map((s) => ({
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        name: s.title,
+        url: s.url,
+      }));
+      await saveShortcuts();
+      renderTiles();
+    }
+    await setStorage({ welcomeDone: true });
+    welcomeEl.classList.add("hidden");
+    if (settings.searchAutoFocus) input.focus();
+  }
+
+  // Adım 1: dil kartı - seçince arayüz anında o dile döner ve otomatik ilerler
+  document.querySelectorAll("#welcome-langs .welcome-card-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      settings.language = btn.dataset.lang;
+      applyLanguage();
+      markWelcomeLang();
+      setTimeout(() => { if (welcomeStep === 1) welcomeGo(2); }, 260);
+    });
+  });
+
+  // Adım 2: isim - canlı olarak karşılama ayarına yazılır
+  document.getElementById("welcome-name").addEventListener("input", (e) => {
+    settings.greetingName = e.target.value;
+    updateGreeting();
+  });
+
+  // Adım 3: özel renk seçici
+  document.getElementById("welcome-custom-color").addEventListener("input", (e) => {
+    settings.accentColor = e.target.value;
+    applySettings();
+    markWelcomeSwatches();
+  });
+
+  document.getElementById("welcome-back").addEventListener("click", () => welcomeGo(welcomeStep - 1));
+  document.getElementById("welcome-next").addEventListener("click", () => {
+    if (welcomeStep < WELCOME_STEPS) welcomeGo(welcomeStep + 1);
+    else finishWelcome();
+  });
+  document.getElementById("welcome-skip").addEventListener("click", finishWelcome);
+
+  // ---------------------------------------------------------------
   // Başlat
   // ---------------------------------------------------------------
   (async function init() {
     await loadSettings();
     applySettings();
     applyLanguage();
-    if (settings.searchAutoFocus) input.focus();
     await applyBackground();
     await loadShortcuts();
+
+    // İlk açılış: sihirbaz tamamlanmadıysa göster, tamamlandıysa aramaya odaklan
+    const { welcomeDone } = await getStorage(["welcomeDone"]);
+    if (!welcomeDone) {
+      showWelcome();
+    } else if (settings.searchAutoFocus) {
+      input.focus();
+    }
   })();
 })();
